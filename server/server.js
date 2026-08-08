@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-app.set('trust proxy', 1);
 require('dotenv').config();
 require('./utils/cronJobs');
 
@@ -10,6 +9,8 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const resourceRoutes = require('./routes/resources');
 const bookingRoutes = require('./routes/bookings');
+
+app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(cors({ origin : 'https://campus-desk-phi.vercel.app/' }));
