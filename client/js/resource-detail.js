@@ -7,7 +7,7 @@ if (!resourceId) window.location.href = 'resources.html';
 const resourceName = urlParams.get('name') || 'Resource Details';
 document.getElementById('resource-name').innerText = resourceName;
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://campus-desk.onrender.com/api';
 
 const dateSelect = document.getElementById('date-select');
 const timelineGrid = document.getElementById('timeline-grid');

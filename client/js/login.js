@@ -11,7 +11,7 @@ const resendBtn = document.getElementById('resend-btn');
 const timerText = document.getElementById('timer-text');
 const timeLeftSpan = document.getElementById('time-left');
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'https://campus-desk.onrender.com/api/auth';
 let countdownInterval;
 let currentUserName = '';
 let currentUserEmail = '';
