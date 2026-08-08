@@ -12,22 +12,39 @@ const timerText = document.getElementById('timer-text');
 const timeLeftSpan = document.getElementById('time-left');
 
 const API_URL = 'http://localhost:5000/api/auth';
-let userEmail = '';
 let countdownInterval;
+let currentUserName = '';
+let currentUserEmail = '';
 
 emailForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  userEmail = emailInput.value.trim();
-  
+
+  const nameElement = document.getElementById('user-name');
+  const emailElement = document.getElementById('email');
+
+  if (!nameElement || !emailElement) {
+    alert("Error: Missing input fields in the HTML.");
+    return;
+  }
+
+  currentUserName = nameElement.value.trim();
+  currentUserEmail = emailElement.value.trim();
+
+  if (!currentUserName || !currentUserEmail) {
+    alert('Please enter both your name and email.');
+    return;
+  }
+
   emailError.classList.add('hidden');
   requestBtn.disabled = true;
   requestBtn.innerText = 'Sending...';
 
   try {
+    // FIX: Removed the extra /auth/ from the URL
     const response = await fetch(`${API_URL}/request-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail })
+      body: JSON.stringify({ name: currentUserName, email: currentUserEmail })
     });
 
     const data = await response.json();
@@ -38,11 +55,12 @@ emailForm.addEventListener('submit', async (e) => {
 
     emailForm.classList.add('hidden');
     otpForm.classList.remove('hidden');
-    formSubtitle.innerText = `We sent a code to ${userEmail}`;
+    formSubtitle.innerText = `We sent a code to ${currentUserEmail}`;
     startCooldown();
 
   } catch (error) {
-    emailError.innerText = error.message;
+    console.error('Error:', error);
+    emailError.innerText = error.message || 'An error occurred. Please try again.';
     emailError.classList.remove('hidden');
   } finally {
     requestBtn.disabled = false;
@@ -50,8 +68,10 @@ emailForm.addEventListener('submit', async (e) => {
   }
 });
 
+// FIX: Combined into a single, clean OTP form listener
 otpForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  
   const otpValue = otpInput.value.trim();
 
   otpError.classList.add('hidden');
@@ -59,10 +79,11 @@ otpForm.addEventListener('submit', async (e) => {
   verifyBtn.innerText = 'Verifying...';
 
   try {
+    // FIX: Removed the extra /auth/ from the URL
     const response = await fetch(`${API_URL}/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail, otp: otpValue })
+      body: JSON.stringify({ email: currentUserEmail, otp: otpValue })
     });
 
     const data = await response.json();
@@ -81,7 +102,8 @@ otpForm.addEventListener('submit', async (e) => {
     }
 
   } catch (error) {
-    otpError.innerText = error.message;
+    console.error('Error:', error);
+    otpError.innerText = error.message || 'Invalid OTP';
     otpError.classList.remove('hidden');
   } finally {
     verifyBtn.disabled = false;

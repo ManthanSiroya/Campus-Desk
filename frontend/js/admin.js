@@ -88,7 +88,7 @@ function renderBookingsTable(bookings) {
 
   bookingsBody.innerHTML = '';
   bookings.forEach(b => {
-    const userStr = b.userId ? `${b.userId.name} <br> <span class="font-xs text-muted">${b.userId.email}</span>` : 'Unknown User';
+    const userStr = b.userId ? `${b.userId.name} <br> <span class="font-xs text-muted">${b.userId.name}</span>` : 'Unknown User';
     const resStr = b.resourceId ? b.resourceId.name : 'Deleted Resource';
     const start = new Date(b.startTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
     const end = new Date(b.endTime).toLocaleTimeString([], { timeStyle: 'short' });

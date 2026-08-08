@@ -12,13 +12,17 @@
 
   <div class="card">
     <h1>Campus Desk</h1>
-    <p class="subtitle" id="form-subtitle">Enter your email to receive an OTP.</p>
+    <p class="subtitle" id="form-subtitle">Enter your name and email to receive an OTP.</p>
 
     
     <form id="email-form">
       <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="user-name" required placeholder="e.g., John Doe" required>
+      </div>
+      <div class="form-group">  
         <label for="email">Email Address</label>
-        <input type="email" id="email" required placeholder="student@example.com">
+        <input type="email" id="email" required placeholder="student@example.com" required>
         <div id="email-error" class="error-message"></div>
       </div>
       <button type="submit" id="request-btn">Request OTP</button>
