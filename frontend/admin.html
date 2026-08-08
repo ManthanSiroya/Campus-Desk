@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Campus Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+<body class="align-start">
+
+  <nav class="navbar">
+    <h2>Campus Desk | Admin</h2>
+    <div class="nav-links">
+      <button id="logout-btn" class="bg-error">Logout</button>
+    </div>
+  </nav>
+
+  <div class="grid-container admin-layout max-w-1200 w-full mt-80 mx-auto">
+    
+    <div class="admin-section">
+      <h2>Add New Resource</h2>
+      <form id="add-resource-form">
+        <div class="form-group">
+          <label>Resource Name</label>
+          <input type="text" id="res-name" required>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="res-location" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="res-desc" placeholder="e.g., Portable projector for presentations" required>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="res-category" class="form-input-bordered" required>
+            <option value="hall">Hall</option>
+            <option value="room">Room</option>
+            <option value="equipment">Equipment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="flex-row gap-4">
+          <div class="form-group flex-1">
+            <label>Open Time</label>
+            <input type="time" id="res-open" required>
+          </div>
+          <div class="form-group flex-1">
+            <label>Close Time</label>
+            <input type="time" id="res-close" required>
+          </div>
+        </div>
+        <div id="res-msg" class="error-message mb-4"></div>
+        <button type="submit" id="add-res-btn">Create Resource</button>
+      </form>
+    </div>
+
+    <div class="admin-section overflow-x-auto">
+      <h2>System Bookings</h2>
+      
+      <div class="filter-bar">
+        <input type="date" id="filter-date" class="form-input-bordered" style="width: auto;">
+        <button id="clear-filter-btn" class="btn-secondary">Clear Filter</button>
+      </div>
+      
+      <table id="bookings-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Resource</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

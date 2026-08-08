@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Campus Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="card">
+    <h1>Campus Desk</h1>
+    <p class="subtitle" id="form-subtitle">Enter your email to receive an OTP.</p>
+
+    
+    <form id="email-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required placeholder="student@example.com">
+        <div id="email-error" class="error-message"></div>
+      </div>
+      <button type="submit" id="request-btn">Request OTP</button>
+    </form>
+
+    
+    <form id="otp-form" class="hidden">
+      <div class="form-group">
+        <label for="otp">Enter 6-Digit OTP</label>
+        <input type="text" id="otp" required maxlength="6" pattern="\d{6}">
+        <div id="otp-error" class="error-message"></div>
+      </div>
+      <button type="submit" id="verify-btn">Login</button>
+      
+      
+      <div style="text-align: center; margin-top: 1rem;">
+        <button type="button" id="resend-btn" disabled style="background: none; color: var(--primary); width: auto; padding: 0;">Resend OTP</button>
+        <span id="timer-text" style="font-size: 0.875rem; color: var(--text-muted);"> in <span id="time-left">60</span>s</span>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

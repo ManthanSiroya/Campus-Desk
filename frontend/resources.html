@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources - Campus Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+<body class="align-start"> 
+
+  <nav class="navbar">
+    <h2>Campus Desk</h2>
+    <div class="nav-links">
+      <a href="my-bookings.html">My Bookings</a>
+      <button id="logout-btn" class="bg-error">Logout</button>
+    </div>
+  </nav>
+
+  <div class="main-container max-w-1200 mt-80 mx-auto">
+    <div class="filters">
+      <input type="text" id="search-input" placeholder="Search resources (e.g., Projector)...">
+      <select id="category-filter">
+        <option value="">All Categories</option>
+        <option value="hall">Halls</option>
+        <option value="room">Rooms</option>
+        <option value="equipment">Equipment</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div id="loading-state" class="hidden text-center text-muted">Loading resources...</div>
+    <div id="error-state" class="error-message text-center"></div>
+    
+    
+    <div class="resource-grid" id="resource-grid"></div>
+
+    <div class="pagination hidden" id="pagination-controls">
+      <button id="prev-btn" disabled>Previous</button>
+      <span id="page-info">Page 1 of 1</span>
+      <button id="next-btn" disabled>Next</button>
+    </div>
+  </div>
+
+  <script src="js/resources.js"></script>
+</body>
+</html>

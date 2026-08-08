@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings - Campus Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+<body class="align-start">
+
+  <nav class="navbar">
+    <h2><a href="resources.html" class="no-underline">Campus Desk</a></h2>
+    <div class="nav-links">
+      <a href="resources.html">All Resources</a>
+      <a href="my-bookings.html" class="active">My Bookings</a>
+    </div>
+  </nav>
+
+  <div class="main-container max-w-800 mt-80 mx-auto">
+    <h2>My Bookings</h2>
+    
+    <div class="tabs" id="status-tabs">
+      <button class="tab-btn active" data-status="confirmed">Upcoming</button>
+      <button class="tab-btn" data-status="completed">Completed</button>
+      <button class="tab-btn" data-status="cancelled">Cancelled</button>
+    </div>
+
+    <div id="loading-state" class="hidden text-center text-muted">Loading bookings...</div>
+    <div id="error-state" class="error-message text-center"></div>
+    
+    <div id="bookings-list" class="flex-col gap-4">
+      
+    </div>
+  </div>
+
+  <script src="js/my-bookings.js"></script>
+</body>
+</html>

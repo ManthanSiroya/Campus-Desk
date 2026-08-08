@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Resource - Campus Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+<body class="align-start">
+
+  <nav class="navbar">
+    <h2><a href="resources.html" class="no-underline">Campus Desk</a></h2>
+    <div class="nav-links">
+      <a href="resources.html">All Resources</a>
+      <a href="my-bookings.html">My Bookings</a>
+    </div>
+  </nav>
+
+  <div class="grid-container max-w-1000 w-full mt-80 mx-auto">
+    
+    <div class="timeline-container">
+      <h2 id="resource-name">Loading Resource...</h2>
+      <p id="resource-details" class="text-muted mb-6 font-sm"></p>
+
+      <div class="date-picker-wrapper">
+        <label for="date-select">Select Date:</label>
+        <input type="date" id="date-select">
+      </div>
+
+      <div id="loading-timeline" class="hidden text-center text-muted">Loading availability...</div>
+      <div id="timeline-grid" class="timeline-grid">
+        
+      </div>
+    </div>
+
+    
+    <div class="booking-form-container">
+      <h3>Book a Slot</h3>
+      <p class="font-sm text-muted mb-4">Duration must be between 30 mins and 4 hours.</p>
+      
+      <form id="booking-form">
+        <div class="form-group">
+          <label for="start-time">Start Time</label>
+          <input type="time" id="start-time" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="end-time">End Time</label>
+          <input type="time" id="end-time" required>
+        </div>
+
+        <div class="form-group">
+          <label for="purpose">Purpose</label>
+          <input type="text" id="purpose" required placeholder="e.g., Club meeting, Study">
+        </div>
+
+        
+        <div id="booking-error" class="error-message alert-error"></div>
+        <div id="booking-success" class="alert-success hidden"></div>
+
+        <button type="submit" id="submit-booking-btn">Confirm Booking</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/resource-detail.js"></script>
+</body>
+</html>
