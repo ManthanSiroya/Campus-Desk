@@ -19,6 +19,9 @@ const purposeInput = document.getElementById('purpose');
 const errorDisplay = document.getElementById('booking-error');
 const successDisplay = document.getElementById('booking-success');
 const submitBtn = document.getElementById('submit-booking-btn');
+const startTimeError = document.getElementById('start-time-error');
+const endTimeError = document.getElementById('end-time-error');
+const purposeError = document.getElementById('purpose-error');
 
 const today = new Date().toISOString().split('T')[0];
 dateSelect.value = today;
@@ -91,6 +94,9 @@ bookingForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   errorDisplay.classList.add('hidden');
   successDisplay.classList.add('hidden');
+  startTimeError.classList.add('hidden');
+  endTimeError.classList.add('hidden');
+  purposeError.classList.add('hidden');
   
   submitBtn.disabled = true;
   submitBtn.innerText = 'Confirming...';
@@ -118,9 +124,13 @@ bookingForm.addEventListener('submit', async (e) => {
 
     if (!response.ok) {
       if (response.status === 409) {
-        throw new Error(data.error); 
+        const err = new Error(data.error);
+        err.field = 'general';
+        throw err; 
       }
-      throw new Error(data.error || 'Failed to create booking.');
+      const err = new Error(data.error || 'Failed to create booking.');
+      err.field = data.field || 'general';
+      throw err;
     }
 
     successDisplay.innerText = 'Booking confirmed!';
@@ -129,8 +139,19 @@ bookingForm.addEventListener('submit', async (e) => {
     fetchTimeline();
 
   } catch (error) {
-    errorDisplay.innerText = error.message;
-    errorDisplay.classList.remove('hidden');
+    if (error.field === 'startTime') {
+      startTimeError.innerText = error.message;
+      startTimeError.classList.remove('hidden');
+    } else if (error.field === 'endTime') {
+      endTimeError.innerText = error.message;
+      endTimeError.classList.remove('hidden');
+    } else if (error.field === 'purpose') {
+      purposeError.innerText = error.message;
+      purposeError.classList.remove('hidden');
+    } else {
+      errorDisplay.innerText = error.message;
+      errorDisplay.classList.remove('hidden');
+    }
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerText = 'Confirm Booking';

@@ -138,7 +138,6 @@ button:disabled {
   color: var(--error);
   font-size: 0.875rem;
   margin-top: 0.25rem;
-  display: none; 
 }
 
 

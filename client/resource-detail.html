@@ -43,20 +43,23 @@
         <div class="form-group">
           <label for="start-time">Start Time</label>
           <input type="time" id="start-time" required>
+          <div id="start-time-error" class="error-message hidden"></div>
         </div>
         
         <div class="form-group">
           <label for="end-time">End Time</label>
           <input type="time" id="end-time" required>
+          <div id="end-time-error" class="error-message hidden"></div>
         </div>
 
         <div class="form-group">
           <label for="purpose">Purpose</label>
           <input type="text" id="purpose" required placeholder="e.g., Club meeting, Study">
+          <div id="purpose-error" class="error-message hidden"></div>
         </div>
 
         
-        <div id="booking-error" class="error-message alert-error"></div>
+        <div id="booking-error" class="error-message alert-error hidden"></div>
         <div id="booking-success" class="alert-success hidden"></div>
 
         <button type="submit" id="submit-booking-btn">Confirm Booking</button>

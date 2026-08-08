@@ -9,9 +9,10 @@ const router = express.Router();
 const otpLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, 
   max: 3,
-  message: { error: 'Too many OTP requests, please try again after 10 minutes' }, 
+  message: { error: 'Too many OTP requests, please try again after 10 minutes' },
+  keyGenerator: (req, res) => req.body.email || req.ip // Enforce limit per email
 });
-router.post('/request-otp', async (req, res) => {
+router.post('/request-otp', otpLimiter, async (req, res) => {
   try {
     const { name, email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email is required' });

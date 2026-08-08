@@ -23,7 +23,7 @@ emailForm.addEventListener('submit', async (e) => {
   const emailElement = document.getElementById('email');
 
   if (!nameElement || !emailElement) {
-    alert("Error: Missing input fields in the HTML.");
+    console.error('[System Error]: Missing input fields in the HTML.');
     return;
   }
 
@@ -31,7 +31,8 @@ emailForm.addEventListener('submit', async (e) => {
   currentUserEmail = emailElement.value.trim();
 
   if (!currentUserName || !currentUserEmail) {
-    alert('Please enter both your name and email.');
+    emailError.innerText = 'Please enter both your name and email.';
+    emailError.classList.remove('hidden');
     return;
   }
 
@@ -40,17 +41,25 @@ emailForm.addEventListener('submit', async (e) => {
   requestBtn.innerText = 'Sending...';
 
   try {
-    // FIX: Removed the extra /auth/ from the URL
     const response = await fetch(`${API_URL}/request-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: currentUserName, email: currentUserEmail })
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      // If JSON parsing fails, it's a System Error (e.g. 502 Bad Gateway HTML page)
+      throw new Error('SYSTEM_ERROR: Invalid JSON response from server');
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to send OTP');
+      // Backend returned a proper JSON error response (User Error)
+      const err = new Error(data.error || 'Failed to send OTP');
+      err.isUserError = true;
+      throw err;
     }
 
     emailForm.classList.add('hidden');
@@ -59,9 +68,14 @@ emailForm.addEventListener('submit', async (e) => {
     startCooldown();
 
   } catch (error) {
-    console.error('Error:', error);
-    emailError.innerText = error.message || 'An error occurred. Please try again.';
-    emailError.classList.remove('hidden');
+    if (error.isUserError) {
+      // Show User Errors in the UI
+      emailError.innerText = error.message;
+      emailError.classList.remove('hidden');
+    } else {
+      // Hide System Errors from the UI and log them to the console
+      console.error('[System Error]:', error);
+    }
   } finally {
     requestBtn.disabled = false;
     requestBtn.innerText = 'Request OTP';
@@ -79,17 +93,23 @@ otpForm.addEventListener('submit', async (e) => {
   verifyBtn.innerText = 'Verifying...';
 
   try {
-    // FIX: Removed the extra /auth/ from the URL
     const response = await fetch(`${API_URL}/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: currentUserEmail, otp: otpValue })
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      throw new Error('SYSTEM_ERROR: Invalid JSON response from server');
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || 'Invalid OTP');
+      const err = new Error(data.error || 'Invalid OTP');
+      err.isUserError = true;
+      throw err;
     }
 
     localStorage.setItem('campusDeskToken', data.token);
@@ -102,9 +122,12 @@ otpForm.addEventListener('submit', async (e) => {
     }
 
   } catch (error) {
-    console.error('Error:', error);
-    otpError.innerText = error.message || 'Invalid OTP';
-    otpError.classList.remove('hidden');
+    if (error.isUserError) {
+      otpError.innerText = error.message;
+      otpError.classList.remove('hidden');
+    } else {
+      console.error('[System Error]:', error);
+    }
   } finally {
     verifyBtn.disabled = false;
     verifyBtn.innerText = 'Login';
