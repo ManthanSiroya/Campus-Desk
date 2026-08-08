@@ -24,7 +24,7 @@ CampusDesk is a full-stack campus resource booking system that allows students t
 
 ### Authentication
 
-* Email OTP (Ethereal Email for development)
+* Email OTP (Gmail SMTP Integration)
 * JWT (JSON Web Tokens)
 
 ---
@@ -55,7 +55,7 @@ CampusDesk is a full-stack campus resource booking system that allows students t
 
 * Role-based authentication
 * Booking conflict detection
-* Rate limiting for security (Max 3 OTP requests per 15 mins)
+* Rate limiting for security (Max 3 OTP requests per 10 mins)
 
 ---
 
@@ -111,19 +111,19 @@ Example:
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/campus_desk
 PORT=5000
 JWT_SECRET=your_super_secret_jwt_key_here
+EMAIL_USER=your_actual_gmail@gmail.com
+EMAIL_PASS=your16digitpassword
 ```
 
 ### Environment Variables
 
-| **Variable** | **Description**                    |
-| ------------ | ---------------------------------- |
-| MONGO_URI    | MongoDB Atlas connection string    |
-| PORT         | Backend port (Default: 5000)       |
-| JWT_SECRET   | Secret used for JWT authentication |
-
-> **Note**
->
-> Nodemailer is configured to use Ethereal Email for development. Test accounts are generated automatically on the fly, so no email credentials are required in the `.env` file.
+| **Variable** | **Description**                             |
+| ------------ | ------------------------------------------- |
+| MONGO_URI    | MongoDB Atlas connection string             |
+| PORT         | Backend port (Default: 5000)                |
+| JWT_SECRET   | Secret used for JWT authentication          |
+| EMAIL_USER   | Gmail address used to send OTPs             |
+| EMAIL_PASS   | 16-character Gmail App Password (no spaces) |
 
 # Database Setup & Seeding
 
@@ -156,7 +156,7 @@ Because the frontend is built with Vanilla HTML/JS, it can be served using any l
 **Using VS Code Live Server (Recommended):**
 
 1. Open the `client` folder in VS Code.
-2. Right-click on `login.html`.
+2. Right-click on `index.html` (or `login.html`).
 3. Select **Open with Live Server**.
 
 Frontend runs at (port may vary):
@@ -170,24 +170,20 @@ http://127.0.0.1:5500
 **Frontend**
 
 ```text
-[Insert your frontend deployment link here]
+https://campus-desk-phi.vercel.app
 ```
 
 **Backend**
 
 ```text
-[Insert your backend deployment link here]
+https://campus-desk.onrender.com
 ```
 
 # Authentication
 
 The application uses Email OTP authentication.
 
-Development mode uses **Ethereal Email**:
-
-When an OTP is requested, the backend automatically generates a temporary test email server and catches the email.
-
-For production deployments, replace the Ethereal configuration in `server/routes/auth.js` with a real SMTP provider (e.g., Gmail App Passwords, SendGrid, or Resend).
+The backend is configured to use **Nodemailer with Gmail SMTP**. When a user requests an OTP, the server securely authenticates with the provided `EMAIL_USER` and `EMAIL_PASS` (App Password) and sends a real 6-digit code directly to the user's inbox.
 
 # Design Document
 
@@ -202,27 +198,11 @@ Please refer to [**DESIGN.md**](./DESIGN.md) for:
 
 Steps:
 
-1. Open the project locally in your code editor. Installation steps given above.
-2. Start Backend:
-
-```bash
-cd server
-npm start
-```
-
-3. Start Frontend:
-
-   Open `client/login.html` with VS Code Live Server.
-
-4. Enter your Name and Email on the login screen and click **Request OTP**.
-
-5. Check your backend terminal (Node console). You will see a message like this:
-
-   `🔗 Preview your OTP email here: https://ethereal.email/message/...`
-
-6. `Ctrl + Click` that link in your terminal to open the fake inbox in your browser.
-
-7. Read the 6-digit OTP from the email, enter it on the website, and sign in!
+1. Visit the live frontend URL: `https://campus-desk-phi.vercel.app` (or run it locally).
+2. Enter your Name and a valid Email address on the login screen.
+3. Click **Request OTP**.
+4. Open your actual email inbox (check the spam folder just in case).
+5. Read the 6-digit OTP from the email, enter it on the website, and sign in!
 
 # Demo Video
 

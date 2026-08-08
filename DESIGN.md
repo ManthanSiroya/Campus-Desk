@@ -14,32 +14,22 @@ The logic validates two conditions simultaneously:
 new booking start time < existing booking end time
 
                        AND
-                       
+
 new booking end time > existing booking start time
 ```
 
 ### Back-to-Back Bookings
 
-Back-to-back bookings are allowed.
+Back-to-back bookings are explicitly allowed.
 
-For example:
+**For example:**
 
-| User   | Booking Time  |
-| ------ | ------------- |
-| User A | 10:00 → 11:00 |
-| User B | 11:00 → 12:00 |
+| **User** | **Booking Time** |
+| -------- | ---------------- |
+| User A   | 10:00 → 11:00    |
+| User B   | 11:00 → 12:00    |
 
-These bookings pass successfully because the validation uses strictly greater-than/less-than operators:
-
-```text
-<  and  >
-```
-
-rather than inclusive operators:
-
-```text
-<=  and  >=
-```
+These bookings pass successfully because the validation utilizes strictly greater-than/less-than operators (`<` and `>`), rather than inclusive operators (`<=` and `>=`).
 
 Therefore, the exact minute one booking ends, the next booking is allowed to begin without triggering an overlap error.
 
@@ -49,16 +39,14 @@ Therefore, the exact minute one booking ends, the next booking is allowed to beg
 
 A race condition could theoretically occur if two students view the same available timeslot on their UI and click the **Book** button at the exact same millisecond.
 
-Because both requests hit the Node.js server simultaneously, the database overlap-check query might return **"available"** for both requests before either request has actually been saved to the database.
-
-This could potentially result in a double booking.
+Because both requests hit the Node.js server simultaneously, the database overlap-check query might return **"available"** for both requests before either request has actually been saved to the database. This could potentially result in a double booking.
 
 ### Production Solution
 
 To handle this in a production environment, I would utilize:
 
-* **MongoDB unique compound indexes**, indexing on both `resourceId` and `timeSlot`
-* **Atomic database transactions**
+* **MongoDB unique compound indexes:** Indexing on both `resourceId` and `timeSlot`.
+* **Atomic database transactions:** Executing the read and write as a single operation.
 
 This guarantees that the database explicitly locks the time block during the write operation, accepting the first request and safely rejecting the second request with a conflict error.
 
@@ -89,38 +77,38 @@ This allows the user to remain authenticated without having to log in again afte
 
 ---
 
-## 4. Debugging Challenge: Silent Client-Side Failure
+## 4. Debugging Challenge: Production Email OTP Delivery
 
-During development, the OTP request button completely stopped working. Clicking it did nothing, and the backend received no API requests.
+During deployment, the Email OTP request route successfully triggered on the frontend without errors, but users were not receiving any authentication emails in their actual inboxes.
 
-### Error
+### Error / Symptom
 
-By opening the browser's Developer Console, I discovered the following uncaught error:
+There were no explicit crashes in the server logs. Instead, the backend was quietly logging test links:
 
 ```text
-TypeError: Cannot read properties of null (reading 'value')
+Preview your OTP email here: https://ethereal.email/message/...
 ```
 
 ### Root Cause
 
-I traced the exact point of failure back to my `login.js` file.
-
-The script was attempting to read a `user-name` input field to send to the backend, but that element had not been added to the HTML DOM yet.
-
-As a result, the script crashed immediately **before the network fetch could execute**.
+The initial codebase utilized **Nodemailer with Ethereal Email**. Ethereal is a mock SMTP service designed exclusively for local testing. It intercepts outbound emails and generates fake, local-only web inboxes instead of routing messages to external public email addresses (e.g., `@gmail.com` or `@yahoo.com`). When deployed to Render, the live backend was still capturing the OTPs internally rather than physically sending them.
 
 ### Solution
 
-I fixed the issue by properly adding the required input element to the HTML:
+To fix this for the production environment, I transitioned the Nodemailer configuration to a real SMTP provider.
 
-```html
-<input id="user-name">
-```
-
-I also wrapped the JavaScript variable declarations in a guard clause:
+1. I generated a **16-character Google App Password** to bypass standard 2FA restrictions for automated apps.
+2. I stored the credentials securely in Render's Environment Variables (`EMAIL_USER` and `EMAIL_PASS`).
+3. I updated the backend transporter configuration in `auth.js` to route through Gmail:
 
 ```javascript
-if (!nameElement) return;
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 ```
 
-This safely catches and handles missing DOM elements in the future, preventing the client-side script from crashing before the API request can be executed.
+This successfully connected the deployed application to a live mail server, allowing it to instantly deliver OTPs to real user inboxes.
