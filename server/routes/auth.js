@@ -6,12 +6,14 @@ const User = require('../models/User');
 const Otp = require('../models/Otp');
 
 const router = express.Router();
+
 const otpLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, 
   max: 3,
   message: { error: 'Too many OTP requests, please try again after 10 minutes' },
   keyGenerator: (req, res) => req.body.email || req.ip // Enforce limit per email
 });
+
 router.post('/request-otp', otpLimiter, async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -31,15 +33,11 @@ router.post('/request-otp', otpLimiter, async (req, res) => {
 
     await Otp.create({ email, otp: otpCode });
 
-    const testAccount = await nodemailer.createTestAccount();
-
     const transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
+      service: 'gmail',
       auth: {
-        user: testAccount.user, 
-        pass: testAccount.pass  
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS  
       }
     });
 
@@ -58,32 +56,37 @@ router.post('/request-otp', otpLimiter, async (req, res) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     
-    console.log(`\n✉️  Ethereal test email caught for: ${email}`);
-    console.log(`🔗 Preview your OTP email here: ${nodemailer.getTestMessageUrl(info)}\n`);
+    console.log(`\n✉️  Real OTP email successfully sent to: ${email}\n`);
 
-    res.status(200).json({ message: 'OTP sent. Check terminal for the Ethereal link!' });
+    res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
     console.error('Email error:', error);
     res.status(500).json({ error: 'Failed to process request or send email.' });
   }
 });
+
 router.post('/verify-otp', async (req, res) => {
   try {
     const { email, otp } = req.body;
     const validOtp = await Otp.findOne({ email, otp });
+    
     if (!validOtp) return res.status(401).json({ error: 'Invalid or expired OTP' }); 
+    
     const user = await User.findOne({ email });
     const token = jwt.sign(
       { id: user._id, role: user.role }, 
       process.env.JWT_SECRET, 
       { expiresIn: '24h' }
     );
+    
     await Otp.deleteOne({ _id: validOtp._id });
+    
     res.status(200).json({ token, user: { id: user._id, name: user.name, role: user.role } });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 module.exports = router;
