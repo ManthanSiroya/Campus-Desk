@@ -1,7 +1,8 @@
 const token = localStorage.getItem('campusDeskToken');
 if (!token) window.location.href = 'login.html';
 
-const API_BASE = 'https://campus-desk.onrender.com/api';
+const IS_LOCAL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const API_BASE = IS_LOCAL ? 'http://localhost:5000/api' : 'https://campus-desk.onrender.com/api';
 let currentStatus = 'confirmed';
 
 const bookingsList = document.getElementById('bookings-list');

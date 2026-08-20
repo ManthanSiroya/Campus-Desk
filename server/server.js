@@ -13,7 +13,14 @@ const bookingRoutes = require('./routes/bookings');
 app.set('trust proxy', 1);
 
 app.use(express.json());
-app.use(cors({ origin : 'https://campus-desk-phi.vercel.app/' }));
+app.use(cors({ 
+  origin: [
+    'https://campus-desk-phi.vercel.app', 
+    'https://campus-desk-phi.vercel.app/', 
+    'http://127.0.0.1:5500', 
+    'http://localhost:5500'
+  ] 
+}));
 app.use('/api/auth', authRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/bookings', bookingRoutes);

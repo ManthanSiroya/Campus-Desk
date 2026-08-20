@@ -1,4 +1,5 @@
-const API_URL = 'https://campus-desk.onrender.com/api/resources';
+const IS_LOCAL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const API_URL = IS_LOCAL ? 'http://localhost:5000/api/resources' : 'https://campus-desk.onrender.com/api/resources';
 const token = localStorage.getItem('campusDeskToken');
 
 if (!token) {

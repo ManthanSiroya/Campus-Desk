@@ -7,7 +7,8 @@ if (!resourceId) window.location.href = 'resources.html';
 const resourceName = urlParams.get('name') || 'Resource Details';
 document.getElementById('resource-name').innerText = resourceName;
 
-const API_BASE = 'https://campus-desk.onrender.com/api';
+const IS_LOCAL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const API_BASE = IS_LOCAL ? 'http://localhost:5000/api' : 'https://campus-desk.onrender.com/api';
 
 const dateSelect = document.getElementById('date-select');
 const timelineGrid = document.getElementById('timeline-grid');

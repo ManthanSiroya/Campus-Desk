@@ -58,7 +58,7 @@ router.post('/request-otp', otpLimiter, async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log(`\n✉️  Real OTP email successfully sent to: ${email}\n`);
+    console.log(`\n✉️  Real OTP email successfully sent to: ${email} [OTP: ${otpCode}]\n`);
 
     res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {

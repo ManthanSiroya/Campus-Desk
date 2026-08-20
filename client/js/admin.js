@@ -5,7 +5,8 @@ if (!token || role !== 'admin') {
   window.location.href = 'login.html';
 }
 
-const API_BASE = 'https://campus-desk.onrender.com';
+const IS_LOCAL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const API_BASE = IS_LOCAL ? 'http://localhost:5000/api' : 'https://campus-desk.onrender.com/api';
 
 const addResForm = document.getElementById('add-resource-form');
 const resMsg = document.getElementById('res-msg');
